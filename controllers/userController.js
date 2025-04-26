@@ -6,26 +6,26 @@ const jwt = require('jsonwebtoken');
 // Updated registration controller
 exports.registerUser = async (req, res) => {
     const { firstName, lastName, email, password } = req.body;
-    
+
     try {
         // Check if user exists
         const userExists = await User.findOne({ email });
         if (userExists) {
-            return res.status(400).json({ 
-                message: "User with this email already exists" 
+            return res.status(400).json({
+                message: "User with this email already exists"
             });
         }
 
         // Create new user
-        const user = await User.create({ 
+        const user = await User.create({
             firstName,
             lastName,
-            email, 
-            password 
+            email,
+            password
         });
 
-        res.status(201).json({ 
-            message: "User registered successfully", 
+        res.status(201).json({
+            message: "User registered successfully",
             user: {
                 id: user._id,
                 firstName: user.firstName,
@@ -36,9 +36,9 @@ exports.registerUser = async (req, res) => {
         });
     } catch (error) {
         console.error("Registration error:", error);
-        res.status(500).json({ 
+        res.status(500).json({
             message: "Server Error",
-            error: error.message 
+            error: error.message
         });
     }
 };
@@ -56,11 +56,21 @@ exports.loginUser = async (req, res) => {
 
         const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
-        res.json({ message: "Login successful", token });
+        res.json({
+            message: "Login successful",
+            token,
+            user: {
+                id: user._id,
+                firstName: user.firstName,
+                lastName: user.lastName,
+                email: user.email
+            }
+        });
     } catch (error) {
         res.status(500).json({ message: "Server Error", error });
     }
 };
+
 
 
 exports.getAllUsers = async (req, res) => {
