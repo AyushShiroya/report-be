@@ -268,3 +268,51 @@ exports.getJobStats = async (req, res) => {
         });
     }
 };
+
+
+// Get monthly job inward statistics
+exports.getMonthlyJobInwardStats = async (req, res) => {
+    try {
+        const currentYear = new Date().getFullYear();
+        
+        // Group by month and count job inwards for the current year
+        const monthlyStats = await JobInward.aggregate([
+            {
+                $match: {
+                    createdAt: {
+                        $gte: new Date(`${currentYear}-01-01`),
+                        $lt: new Date(`${currentYear + 1}-01-01`)
+                    }
+                }
+            },
+            {
+                $group: {
+                    _id: { $month: "$createdAt" },
+                    count: { $sum: 1 }
+                }
+            },
+            {
+                $sort: { "_id": 1 }
+            }
+        ]);
+
+        // Initialize an array with all months set to 0
+        const result = Array(12).fill(0);
+        
+        // Fill in the counts from the aggregation
+        monthlyStats.forEach(month => {
+            result[month._id - 1] = month.count; // _id is 1-12 (month numbers)
+        });
+
+        res.status(200).json({
+            success: true,
+            data: result,
+            labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+};

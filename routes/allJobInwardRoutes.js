@@ -19,6 +19,8 @@ router.get('/', jobInwardController.getAllJobInwards);
 
 router.get('/stats', jobInwardController.getJobStats);
 
+router.get('/stats/monthly', jobInwardController.getMonthlyJobInwardStats);
+
 // GET /api/jobinwards/:id - Get single job inward
 router.get('/:id', jobInwardController.getJobInwardById);
 
