@@ -17,8 +17,11 @@ router.post(
 // GET /api/jobinwards - Get all job inwards
 router.get('/', jobInwardController.getAllJobInwards);
 
+router.get('/stats', jobInwardController.getJobStats);
+
 // GET /api/jobinwards/:id - Get single job inward
 router.get('/:id', jobInwardController.getJobInwardById);
+
 
 // PUT /api/jobinwards/:id - Update job inward
 router.put(
@@ -29,5 +32,6 @@ router.put(
 
 // DELETE /api/jobinwards/:id - Delete job inward
 router.delete('/:id', jobInwardController.deleteJobInward);
+
 
 module.exports = router;

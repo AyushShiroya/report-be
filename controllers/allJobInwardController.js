@@ -242,3 +242,29 @@ exports.deleteJobInward = async (req, res) => {
         });
     }
 };
+
+exports.getJobStats = async (req, res) => {
+    try {
+        const totalJobs = await JobInward.countDocuments();
+
+        const uniqueClients = await JobInward.distinct('clientId');
+        const totalClients = uniqueClients.length;
+
+        const uniqueContractors = await JobInward.distinct('contractorId');
+        const totalContractors = uniqueContractors.length;
+
+        res.status(200).json({
+            success: true,
+            data: {
+                totalJobs,
+                totalClients,
+                totalContractors
+            }
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+};
